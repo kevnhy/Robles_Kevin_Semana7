@@ -25,3 +25,6 @@ class Cola:
 
     def cantidad(self):
         return len(self._elementos) - self._frente
+
+    def obtener_todos(self):
+        return self._elementos[self._frente:]

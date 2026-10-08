@@ -35,13 +35,23 @@ def test_eliminar_cola_vacia_lanza_error():
     with pytest.raises(IndexError):
         cola.eliminar()
 
-def test_repository_guarda_y_atiente_pedidos():
-    repo = PedidoRepository()
+def test_repository_guarda_y_atiende_pedidos(tmp_path):
+    repo = PedidoRepository(tmp_path / "prueba.json")
     p1 = Pedido("P001", "Ana", "Laptop")
     p2 = Pedido("P002", "Pedro", "Monitor")
-    repo.guardar(p1); repo.guardar(p2)
+    repo.guardar(p1)
+    repo.guardar(p2)
     assert repo.cantidad() == 2
     assert repo.obtener_siguiente() == p1
     assert repo.atender() == p1
     assert repo.obtener_siguiente() == p2
     assert repo.cantidad() == 1
+
+def test_persistencia(tmp_path):
+    archivo = tmp_path / "pedidos.json"
+    repo = PedidoRepository(archivo)
+    repo.guardar(Pedido("P001", "Ana", "Laptop"))
+
+    nuevo_repo = PedidoRepository(archivo)
+    assert nuevo_repo.cantidad() == 1
+    assert nuevo_repo.obtener_siguiente().codigo == "P001"
